@@ -4,11 +4,11 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from mashumaro import field_options
-from mashumaro.mixins.orjson import DataClassORJSONMixin
+from mashumaro.mixins.dict import DataClassDictMixin
 
 
 @dataclass
-class CurrentSettings(DataClassORJSONMixin):
+class CurrentSettings(DataClassDictMixin):
     """Represents the current setting of a device."""
 
     firmware_version: str = field(metadata=field_options(alias="Firmware"))

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap-env:Envelope
+        xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"
+        soap-env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+        >
+    <soap-env:Body>
+        <m:GetInfoResponse
+        xmlns:m="urn:NETGEAR-ROUTER:service:DeviceConfig:1">
+            <BlankState>0</BlankState>
+            <NewBlockSiteEnable>0</NewBlockSiteEnable>
+            <NewBlockSiteName></NewBlockSiteName>
+            <NewTimeZone>+1</NewTimeZone>
+            <NewDaylightSaving>1</NewDaylightSaving>
+        </m:GetInfoResponse>
+        <ResponseCode>000</ResponseCode>
+    </soap-env:Body>
+</soap-env:Envelope>

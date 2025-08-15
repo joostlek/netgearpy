@@ -1,0 +1,9 @@
+# serializer version: 1
+# name: test_get_current_setting
+  dict({
+    'firmware_version': 'V1.0.12.216_10.2.122',
+    'https_port': 5555,
+    'login_method': 2,
+    'model': 'R7000',
+  })
+# ---

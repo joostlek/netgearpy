@@ -1,0 +1,14 @@
+Firmware=V1.0.12.216_10.2.122
+RegionTag=R7000_WW
+Region=ww
+Model=R7000
+InternetConnectionStatus=Up
+ParentalControlSupported=1
+CircleEnabled=0
+OpenDNSEnabled=0
+SOAPVersion=3.21
+LoginMethod=2.0
+ReadyShareSupportedLevel=5
+XCloudSupported=1
+DeviceMode=0
+SOAP_HTTPs_Port=5555

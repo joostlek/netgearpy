@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<v:Envelope
+        xmlns:v="http://schemas.xmlsoap.org/soap/envelope/">
+    <v:Header>
+        <SessionID>A7D88AE69687E58D9A00</SessionID>
+    </v:Header>
+    <v:Body>
+    </v:Body>
+</v:Envelope>

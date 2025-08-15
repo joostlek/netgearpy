@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap-env:Envelope
+        xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"
+        soap-env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+        >
+    <soap-env:Body>
+        <m:GetPortMappingInfoResponse
+        xmlns:m="urn:NETGEAR-ROUTER:service:WANIPConnection:1">
+            <NewPortMappingNumberOfEntries>2</NewPortMappingNumberOfEntries>
+            <NewPortMappingInfo>TCP;25565;123;192.168.0.20;Minecraft@UDP;123;234;192.168.0.3;Parsec</NewPortMappingInfo>
+        </m:GetPortMappingInfoResponse>
+        <ResponseCode>000</ResponseCode>
+    </soap-env:Body>
+</soap-env:Envelope>

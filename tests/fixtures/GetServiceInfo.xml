@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap-env:Envelope
+        xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"
+        soap-env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+        >
+    <soap-env:Body>
+        <m:GetSystemInfoResponse
+        xmlns:m="urn:NETGEAR-ROUTER:service:DeviceInfo:1">
+            <NewCPUUtilization>27</NewCPUUtilization>
+            <NewPhysicalMemory>256</NewPhysicalMemory>
+            <NewMemoryUtilization>59</NewMemoryUtilization>
+            <NewPhysicalFlash>128</NewPhysicalFlash>
+            <NewAvailableFlash>128.00</NewAvailableFlash>
+        </m:GetSystemInfoResponse>
+        <ResponseCode>000</ResponseCode>
+    </soap-env:Body>
+</soap-env:Envelope>

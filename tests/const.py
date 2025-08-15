@@ -3,7 +3,7 @@
 from importlib import metadata
 
 IP = "192.168.0.1"
-MOCK_URL = f"http://{IP}"
+MOCK_URL = f"https://{IP}:5555"
 
 version = metadata.version("netgearpy")
 

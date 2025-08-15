@@ -8,9 +8,10 @@ from importlib import metadata
 from typing import Any, Self
 
 from aiohttp import ClientSession
-from aiohttp.hdrs import METH_GET
+from aiohttp.hdrs import METH_GET, METH_POST
 from yarl import URL
 
+from netgearpy.const import ENVELOPE, LOGIN_BODY
 from netgearpy.models import CurrentSettings
 
 VERSION = metadata.version(__package__)
@@ -24,17 +25,19 @@ class NetgearClient:
     session: ClientSession | None = None
     request_timeout: int = 10
     _close_session: bool = False
+    _soap_port: int | None = None
+    _login_method: int | None = None
 
     async def _request(
         self,
         url: str,
         *,
         method: str = METH_GET,
-        data: dict[str, Any] | None = None,
-        params: dict[str, Any] | None = None,
+        data: str | None = None,
+        headers: dict[str, Any] | None = None,
     ) -> str:
         """Handle a request to a Netgear router."""
-        headers = {
+        base_headers = {
             "User-Agent": f"Netgearpy/{VERSION}",
             "Accept": "application/xml",
         }
@@ -43,13 +46,15 @@ class NetgearClient:
             self.session = ClientSession()
             self._close_session = True
 
+        if headers is None:
+            headers = {}
+
         async with asyncio.timeout(self.request_timeout):
             response = await self.session.request(
                 method,
                 url,
-                headers=headers,
-                json=data,
-                params=params,
+                headers=base_headers | headers,
+                data=data,
             )
 
         return await response.text()
@@ -67,7 +72,35 @@ class NetgearClient:
             if entry:
                 split_entry = entry.split("=")
                 res[split_entry[0]] = split_entry[1]
-        return CurrentSettings.from_dict(res)
+        result = CurrentSettings.from_dict(res)
+        self._soap_port = result.https_port
+        self._login_method = result.login_method
+        return result
+
+    async def _post_xml(self, service: str, action: str, body: str) -> str:
+        """Post XML data to the Netgear router."""
+        if self._soap_port is None or self._login_method is None:
+            await self.get_current_setting()
+        https = self._soap_port in [443, 5555]
+        url = URL.build(
+            scheme="https" if https else "http",
+            host=self.host,
+            path="/soap/server_sa/",
+            port=self._soap_port,
+        )
+        headers = {
+            "SOAPAction": f"urn:NETGEAR-ROUTER:service:{service}:1#{action}",
+        }
+        body_str = ENVELOPE.format(body)
+        return await self._request(
+            str(url), method=METH_POST, data=body_str, headers=headers
+        )
+
+    async def login(self, username: str, password: str) -> None:
+        """Login to the Netgear router."""
+        await self._post_xml(
+            "DeviceConfig", "SOAPLogin", LOGIN_BODY.format(username, password)
+        )
 
     async def close(self) -> None:
         """Close open client session."""

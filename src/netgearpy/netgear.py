@@ -116,6 +116,7 @@ class NetgearClient:
                 continue
             assert item.text is not None  # noqa: S101
             response = item.text
+            break
         devices = []
         first = True
         for entry in response.split("@"):

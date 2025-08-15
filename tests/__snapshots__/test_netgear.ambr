@@ -1,4 +1,17 @@
 # serializer version: 1
+# name: test_get_attached_devices
+  list([
+    dict({
+      'blocked': False,
+      'connection_type': <ConnectionType.WIRELESS: 'wireless'>,
+      'hostname': 'motorola-edge-50-fusion',
+      'ip_address': '192.168.0.2',
+      'link_speed': 192,
+      'mac_address': 'D6:2E:BD:9B:0A:63',
+      'signal_strength': 100,
+    }),
+  ])
+# ---
 # name: test_get_current_setting
   dict({
     'firmware_version': 'V1.0.12.216_10.2.122',

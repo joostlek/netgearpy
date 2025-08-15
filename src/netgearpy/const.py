@@ -14,3 +14,7 @@ xmlns:v="http://schemas.xmlsoap.org/soap/envelope/">
 
 LOGIN_BODY = """<M1:SOAPLogin xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1">
 <Username>{}</Username><Password>{}</Password></M1:SOAPLogin>"""
+
+GET_ATTACHED_DEVICES_BODY = (
+    """<M1:GetAttachDevice xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />"""
+)

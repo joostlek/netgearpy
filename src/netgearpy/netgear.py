@@ -6,13 +6,14 @@ import asyncio
 from dataclasses import dataclass
 from importlib import metadata
 from typing import Any, Self
+import xml.etree.ElementTree as ET
 
 from aiohttp import ClientSession
 from aiohttp.hdrs import METH_GET, METH_POST
 from yarl import URL
 
-from netgearpy.const import ENVELOPE, LOGIN_BODY
-from netgearpy.models import CurrentSettings
+from netgearpy.const import ENVELOPE, GET_ATTACHED_DEVICES_BODY, LOGIN_BODY
+from netgearpy.models import AttachedDevice, CurrentSettings
 
 VERSION = metadata.version(__package__)
 
@@ -101,6 +102,29 @@ class NetgearClient:
         await self._post_xml(
             "DeviceConfig", "SOAPLogin", LOGIN_BODY.format(username, password)
         )
+
+    async def get_attached_devices(self) -> list[AttachedDevice]:
+        """Get the attached devices from the Netgear router."""
+        response = await self._post_xml(
+            "DeviceInfo",
+            "GetAttachedDevices",
+            GET_ATTACHED_DEVICES_BODY,
+        )
+        root = ET.fromstring(response)  # noqa: S314
+        for item in root.iter():
+            if item.tag != "NewAttachDevice":
+                continue
+            assert item.text is not None  # noqa: S101
+            response = item.text
+        devices = []
+        first = True
+        for entry in response.split("@"):
+            if first:
+                first = False
+                continue
+            device = AttachedDevice.from_string(entry)
+            devices.append(device)
+        return devices
 
     async def close(self) -> None:
         """Close open client session."""

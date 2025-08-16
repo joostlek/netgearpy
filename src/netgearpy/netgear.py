@@ -48,6 +48,7 @@ class NetgearClient:
     _close_session: bool = False
     _soap_port: int | None = None
     _login_method: int | None = None
+    _lock = asyncio.Lock()
 
     async def _request(
         self,
@@ -115,9 +116,10 @@ class NetgearClient:
             "SOAPAction": f"urn:NETGEAR-ROUTER:service:{service}:1#{action}",
         }
         body_str = ENVELOPE.format(body)
-        response = await self._request(
-            str(url), method=METH_POST, data=body_str, headers=headers
-        )
+        async with self._lock:
+            response = await self._request(
+                str(url), method=METH_POST, data=body_str, headers=headers
+            )
         response_dict = {}
         root = ET.fromstring(response)  # noqa: S314
         for item in root.iter():

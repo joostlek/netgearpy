@@ -78,7 +78,9 @@ class NetgearClient:
         self._login_method = result.login_method
         return result
 
-    async def _post_xml(self, service: str, action: str, body: str) -> str:
+    async def _post_xml(
+        self, service: str, action: str, body: str
+    ) -> dict[str, str | None]:
         """Post XML data to the Netgear router."""
         if self._soap_port is None or self._login_method is None:
             await self.get_current_setting()
@@ -93,9 +95,18 @@ class NetgearClient:
             "SOAPAction": f"urn:NETGEAR-ROUTER:service:{service}:1#{action}",
         }
         body_str = ENVELOPE.format(body)
-        return await self._request(
+        response = await self._request(
             str(url), method=METH_POST, data=body_str, headers=headers
         )
+        response_dict = {}
+        root = ET.fromstring(response)  # noqa: S314
+        for item in root.iter():
+            if item.tag != "{http://schemas.xmlsoap.org/soap/envelope/}Body":
+                continue
+            for child in item:
+                for subchild in child:
+                    response_dict[subchild.tag] = subchild.text
+        return response_dict
 
     async def login(self, username: str, password: str) -> None:
         """Login to the Netgear router."""
@@ -110,22 +121,12 @@ class NetgearClient:
             "GetAttachedDevices",
             GET_ATTACHED_DEVICES_BODY,
         )
-        root = ET.fromstring(response)  # noqa: S314
-        for item in root.iter():
-            if item.tag != "NewAttachDevice":
-                continue
-            assert item.text is not None  # noqa: S101
-            response = item.text
-            break
-        devices = []
-        first = True
-        for entry in response.split("@"):
-            if first:
-                first = False
-                continue
-            device = AttachedDevice.from_string(entry)
-            devices.append(device)
-        return devices
+        device_string = response["NewAttachDevice"]
+        if not device_string:
+            return []
+        return [
+            AttachedDevice.from_string(entry) for entry in device_string.split("@")[1::]
+        ]
 
     async def close(self) -> None:
         """Close open client session."""

@@ -129,12 +129,13 @@ class NetgearClient:
         body_str = ENVELOPE.format(body)
         async with self._lock:
             await asyncio.sleep(0.3)
-            _LOGGER.debug(
-                "Posting XML to %s with action `%s` and body: %s",
-                url,
-                f"urn:NETGEAR-ROUTER:service:{service}:1#{action}",
-                body_str,
-            )
+            if service != DeviceConfigAction.LOGIN:
+                _LOGGER.debug(
+                    "Posting XML to %s with action `%s` and body: %s",
+                    url,
+                    f"urn:NETGEAR-ROUTER:service:{service}:1#{action}",
+                    body_str,
+                )
             response = await self._request(
                 str(url), method=METH_POST, data=body_str, headers=headers
             )

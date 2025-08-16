@@ -79,8 +79,8 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
             "GetAttachDevice.xml",
             "get_attached_devices",
             "DeviceInfo",
-            "GetAttachedDevices",
-            """<M1:GetAttachedDevice xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",
+            "GetAttachDevice",
+            """<M1:GetAttachDevice xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",
         ),
         (
             "DeviceInfo.xml",
@@ -110,6 +110,27 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
             "GetSystemInfo",
             """<M1:GetSystemInfo xsi:nil="true" />""",
         ),
+        (
+            "GetEthernetLinkStatus.xml",
+            "get_ethernet_link_status",
+            "WANEthernetLinkConfig",
+            "GetEthernetLinkStatus",
+            """<M1:GetEthernetLinkStatus xsi:nil="true" />""",
+        ),
+        (
+            "GetBlockDeviceEnableStatus.xml",
+            "is_block_device_enabled",
+            "DeviceConfig",
+            "GetBlockDeviceEnableStatus",
+            """<M1:GetBlockDeviceEnableStatus xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1" />""",
+        ),
+        (
+            "GetTrafficMeterEnabled.xml",
+            "is_traffic_meter_enabled",
+            "DeviceConfig",
+            "GetTrafficMeterEnabled",
+            """<M1:GetTrafficMeterEnabled xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1" />""",
+        ),
     ],
     ids=[
         "get_attached_devices",
@@ -117,6 +138,9 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
         "get_traffic_meter_statistics",
         "get_traffic_meter_statistics_2",
         "get_system_info",
+        "get_ethernet_link_status",
+        "is_block_device_enabled",
+        "is_traffic_meter_enabled",
     ],
 )
 async def test_get_data(  # pylint: disable=too-many-positional-arguments
@@ -158,5 +182,5 @@ async def test_is_parental_control_enabled(
     check_soap_called(
         responses,
         "urn:NETGEAR-ROUTER:service:ParentalControl:1#GetEnableStatus",
-        """<v:Body><GetEnableStatus></GetEnableStatus></v:Body>""",
+        """<GetEnableStatus></GetEnableStatus>""",
     )

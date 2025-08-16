@@ -53,6 +53,9 @@
     'vpn_version': None,
   })
 # ---
+# name: test_get_data[get_ethernet_link_status]
+  'Up'
+# ---
 # name: test_get_data[get_system_info]
   dict({
     'cpu_usage': 27,
@@ -108,4 +111,10 @@
     'upload_today': 6.19,
     'upload_yesterday': 0.0,
   })
+# ---
+# name: test_get_data[is_block_device_enabled]
+  False
+# ---
+# name: test_get_data[is_traffic_meter_enabled]
+  False
 # ---

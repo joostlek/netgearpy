@@ -12,6 +12,128 @@ from mashumaro.mixins.dict import DataClassDictMixin
 from netgearpy.helpers import statistics_to_data, time_to_minutes
 
 
+class Service(StrEnum):
+    """Enum for service types."""
+
+    DEVICE_CONFIG = "DeviceConfig"
+    TIME = "Time"
+    LAN_CONFIG_SECURITY = "LANConfigSecurity"
+    WAN_IP_CONNECTION = "WANIPConnection"
+    WAN_ETHERNET_LINK_CONFIG = "WANEthernetLinkConfig"
+    PARENTAL_CONTROL = "ParentalControl"
+    DEVICE_INFO = "DeviceInfo"
+    ADVANCED_QOS = "AdvancedQoS"
+    WLAN_CONFIGURATION = "WLANConfiguration"
+
+
+class DeviceConfigAction(StrEnum):
+    """Enum for device config actions."""
+
+    LOGIN = "SOAPLogin"
+    LOGOUT = "SOAPLogout"
+    REBOOT = "Reboot"
+    CHECK_NEW_FIRMWARE = "CheckNewFirmware"
+    CHECK_APP_NEW_FIRMWARE = "CheckAppNewFirmware"
+    UPDATE_NEW_FIRMWARE = "UpdateNewFirmware"
+    CONFIGURATION_STARTED = "ConfigurationStarted"
+    CONFIGURATION_FINISHED = "ConfigurationFinished"
+    GET_INFO = "GetInfo"
+    GET_TIME_ZONE_INFO = "GetTimeZoneInfo"
+
+    GET_DEVICE_LIST_ALL = "GetDeviceListAll"
+    GET_BLOCK_DEVICE_ENABLE_STATUS = "GetBlockDeviceEnableStatus"
+    SET_BLOCK_DEVICE_ENABLE = "SetBlockDeviceEnable"
+    ENABLE_BLOCK_DEVICE_FOR_ALL = "EnableBlockDeviceForAll"
+    SET_BLOCK_DEVICE_BY_MAC = "SetBlockDeviceByMAC"
+
+    GET_TRAFFIC_METER_ENABLED = "GetTrafficMeterEnabled"
+    GET_TRAFFIC_METER_OPTIONS = "GetTrafficMeterOptions"
+    GET_TRAFFIC_METER_STATISTICS = "GetTrafficMeterStatistics"
+    ENABLE_TRAFFIC_METER = "EnableTrafficMeter"
+
+
+class TimeAction(StrEnum):
+    """Enum for time actions."""
+
+    GET_INFO = "GetInfo"
+
+
+class LanConfigSecurityAction(StrEnum):
+    """Enum for LAN config security actions."""
+
+    GET_INFO = "GetInfo"
+
+
+class WanIpConnectionAction(StrEnum):
+    """Enum for WAN IP connection actions."""
+
+    GET_INFO = "GetInfo"
+    GET_PORT_MAPPING_INFO = "GetPortMappingInfo"
+    GET_CONNECTION_TYPE_INFO = "GetConnectionTypeInfo"
+    GET_INTERNET_PORT_INFO = "GetInternetPortInfo"
+
+
+class WanEthernetLinkConfigAction(StrEnum):
+    """Enum for WAN Ethernet link config actions."""
+
+    GET_ETHERNET_LINK_STATUS = "GetEthernetLinkStatus"
+
+
+class ParentalControlAction(StrEnum):
+    """Enum for parental control actions."""
+
+    LOGIN = "Authenticate"
+    GET_ENABLE_STATUS = "GetEnableStatus"
+    ENABLE_PARENTAL_CONTROL = "EnableParentalControl"
+
+
+class DeviceInfoAction(StrEnum):
+    """Enum for device info actions."""
+
+    GET_INFO = "GetInfo"
+    GET_SUPPORT_FEATURE_LIST_XML = "GetSupportFeatureListXML"
+    GET_ATTACHED_DEVICES = "GetAttachDevice"
+    GET_ATTACHED_DEVICES_2 = "GetAttachDevice2"
+    SET_NETGEAR_DEVICE_NAME = "SetNetgearDeviceName"
+    GET_SYSTEM_LOGS = "GetSystemLogs"
+    GET_SYSTEM_INFO = "GetSystemInfo"
+    GET_SYSTEM_UPTIME = "GetSysUpTime"
+
+
+class AdvancedQoSAction(StrEnum):
+    """Enum for advanced QoS actions."""
+
+    SET_OOKLA_SPEEDTEST_START = "SetOOKLASpeedTestStart"
+    GET_OOKLA_SPEEDTEST_RESULT = "GetOOKLASpeedTestResult"
+    GET_QOS_ENABLE_STATUS = "GetQoSEnableStatus"
+    SET_QOS_ENABLE_STATUS = "SetQoSEnableStatus"
+    GET_BANDWIDTH_CONTROL_OPTIONS = "GetBandwidthControlOptions"
+    SET_BANDWIDTH_CONTROL_OPTIONS = "SetBandwidthControlOptions"
+
+
+class WlanConfigurationAction(StrEnum):
+    """Enum for WLAN configuration actions."""
+
+    GET_GUEST_ACCESS_ENABLED = "GetGuestAccessEnabled"  # 2.4G-1 R7800/R8000
+    GET_5G_GUEST_ACCESS_ENABLED = "Get5GGuestAccessEnabled"  # 5G-1 R7800
+    GET_5G1_GUEST_ACCESS_ENABLED = "Get5G1GuestAccessEnabled"  # 5G-1 R8000
+    GET_5G_GUEST_ACCESS_DISABLED_2 = "Get5GGuestAccessEnabled2"  # 5G-2 R8000
+    SET_GUEST_ACCESS_ENABLED = "SetGuestAccessEnabled"  # 2.4G-1 R7800
+    SET_GUEST_ACCESS_ENABLED_2 = "SetGuestAccessEnabled2"  # 2.4G-1 R8000
+    SET_5G_GUEST_ACCESS_ENABLED = "Set5GGuestAccessEnabled"  # 5G-1 R7800
+    SET_5G1_GUEST_ACCESS_ENABLED = "Set5G1GuestAccessEnabled"  # 5G-1 R8000
+    SET_5G_GUEST_ACCESS_ENABLED_2 = "Set5GGuestAccessEnabled2"  # 5G-2 R8000
+    IS_SMART_CONNECT_ENABLED = "IsSmartConnectEnabled"
+    SET_SMART_CONNECT_ENABLED = "SetSmartConnectEnable"
+    GET_AVAILABLE_CHANNEL = "GetAvailableChannel"
+    GET_CHANNEL_INFO = "GetChannelInfo"
+    GET_5G_CHANNEL_INFO = "Get5GChannelInfo"
+    GET_5G1_CHANNEL_INFO = "Get5G1ChannelInfo"
+    SET_CHANNEL = "SetChannel"
+    SET_5G_CHANNEL = "Set5GChannel"
+    SET_5G1_CHANNEL = "Set5G1Channel"
+
+
 @dataclass
 class CurrentSettings(DataClassDictMixin):
     """Represents the current setting of a device."""

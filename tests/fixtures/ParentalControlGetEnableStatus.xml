@@ -6,7 +6,7 @@
     <soap-env:Body>
         <m:GetEnableStatusResponse
         xmlns:m="urn:NETGEAR-ROUTER:service:ParentalControl:1">
-            <ParentalControl>0</ParentalControl>
+            <d>0</d>
         </m:GetEnableStatusResponse>
         <ResponseCode>000</ResponseCode>
     </soap-env:Body>

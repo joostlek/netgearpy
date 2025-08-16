@@ -32,6 +32,10 @@ GET_TRAFFIC_METER_STATISTICS_BODY = _get_empty_body(
     Service.DEVICE_CONFIG, "GetTrafficMeterStatistics"
 )
 
+GET_BLOCK_DEVICE_ENABLE_BODY = _get_empty_body(
+    Service.DEVICE_CONFIG, "GetBlockDeviceEnableStatus"
+)
+
 IS_PARENTAL_CONTROL_ENABLED_BODY = """<GetEnableStatus></GetEnableStatus>"""
 
 GET_ETHERNET_LINK_STATUS_BODY = """<M1:GetEthernetLinkStatus xsi:nil="true" />"""

@@ -191,7 +191,7 @@ class NetgearClient:
     async def get_system_info(self) -> SystemInfo:
         """Get system information from the Netgear router."""
         response = await self._post_xml(
-            "DeviceInfo", "GetSystemInfo", GET_SYSTEM_INFO_BODY
+            Service.DEVICE_INFO, DeviceInfoAction.GET_SYSTEM_INFO, GET_SYSTEM_INFO_BODY
         )
         return SystemInfo.from_dict(response)
 

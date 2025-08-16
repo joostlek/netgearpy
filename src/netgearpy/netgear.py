@@ -15,6 +15,7 @@ from yarl import URL
 from netgearpy.const import (
     ENVELOPE,
     GET_ATTACHED_DEVICES_BODY,
+    GET_BLOCK_DEVICE_ENABLE_BODY,
     GET_ETHERNET_LINK_STATUS_BODY,
     GET_INFO_BODY,
     GET_TRAFFIC_METER_STATISTICS_BODY,
@@ -154,6 +155,15 @@ class NetgearClient:
             Service.PARENTAL_CONTROL,
             ParentalControlAction.GET_ENABLE_STATUS,
             IS_PARENTAL_CONTROL_ENABLED_BODY,
+        )
+        return response.get("ParentalControl") == "1"
+
+    async def is_block_device_enabled(self) -> bool:
+        """Check if block device is enabled."""
+        response = await self._post_xml(
+            Service.DEVICE_CONFIG,
+            DeviceConfigAction.GET_BLOCK_DEVICE_ENABLE_STATUS,
+            GET_BLOCK_DEVICE_ENABLE_BODY,
         )
         return response.get("ParentalControl") == "1"
 

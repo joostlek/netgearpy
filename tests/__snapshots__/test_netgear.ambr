@@ -112,7 +112,13 @@
     'upload_yesterday': 0.0,
   })
 # ---
+# name: test_get_data[is_5g_guest_access_enabled]
+  False
+# ---
 # name: test_get_data[is_block_device_enabled]
+  False
+# ---
+# name: test_get_data[is_guest_access_enabled]
   False
 # ---
 # name: test_get_data[is_traffic_meter_enabled]

@@ -8,6 +8,8 @@ from aiohttp.hdrs import METH_POST
 from aioresponses import aioresponses
 import pytest
 
+from netgearpy.models import Service, WlanConfigurationAction
+
 from . import load_fixture
 from .const import HEADERS, MOCK_URL
 
@@ -131,6 +133,20 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
             "GetTrafficMeterEnabled",
             """<M1:GetTrafficMeterEnabled xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1" />""",
         ),
+        (
+            "GetGuestAccessEnabled.xml",
+            "is_guest_access_enabled",
+            Service.WLAN_CONFIGURATION,
+            WlanConfigurationAction.GET_GUEST_ACCESS_ENABLED,
+            """<M1:GetGuestAccessEnabled xmlns:M1="urn:NETGEAR-ROUTER:service:WLANConfiguration:1" />""",
+        ),
+        (
+            "Get5GGuestAccessEnabled.xml",
+            "is_5g_guest_access_enabled",
+            Service.WLAN_CONFIGURATION,
+            WlanConfigurationAction.GET_5G1_GUEST_ACCESS_ENABLED_2,
+            """<M1:Get5G1GuestAccessEnabled xmlns:M1="urn:NETGEAR-ROUTER:service:WLANConfiguration:1" />""",
+        ),
     ],
     ids=[
         "get_attached_devices",
@@ -141,6 +157,8 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
         "get_ethernet_link_status",
         "is_block_device_enabled",
         "is_traffic_meter_enabled",
+        "is_guest_access_enabled",
+        "is_5g_guest_access_enabled",
     ],
 )
 async def test_get_data(  # pylint: disable=too-many-positional-arguments

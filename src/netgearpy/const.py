@@ -50,6 +50,12 @@ IS_5G_GUEST_ACCESS_ENABLED_BODY = _get_empty_body(
     Service.WLAN_CONFIGURATION, "Get5G1GuestAccessEnabled"
 )
 
+IS_QOS_ENABLED_BODY = _get_empty_body(Service.ADVANCED_QOS, "GetQoSEnableStatus")
+
+IS_SMART_CONNECT_ENABLED = _get_empty_body(
+    Service.WLAN_CONFIGURATION, "IsSmartConnectEnabled"
+)
+
 IS_PARENTAL_CONTROL_ENABLED_BODY = """<GetEnableStatus></GetEnableStatus>"""
 
 GET_ETHERNET_LINK_STATUS_BODY = """<M1:GetEthernetLinkStatus xsi:nil="true" />"""

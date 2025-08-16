@@ -8,7 +8,7 @@ from aiohttp.hdrs import METH_POST
 from aioresponses import aioresponses
 import pytest
 
-from netgearpy.models import Service, WlanConfigurationAction
+from netgearpy.models import AdvancedQoSAction, Service, WlanConfigurationAction
 
 from . import load_fixture
 from .const import HEADERS, MOCK_URL
@@ -147,6 +147,20 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
             WlanConfigurationAction.GET_5G1_GUEST_ACCESS_ENABLED_2,
             """<M1:Get5G1GuestAccessEnabled xmlns:M1="urn:NETGEAR-ROUTER:service:WLANConfiguration:1" />""",
         ),
+        (
+            "GetQoSEnableStatus.xml",
+            "is_qos_enabled",
+            Service.ADVANCED_QOS,
+            AdvancedQoSAction.GET_QOS_ENABLE_STATUS,
+            """<M1:GetQoSEnableStatus xmlns:M1="urn:NETGEAR-ROUTER:service:AdvancedQoS:1" />""",
+        ),
+        (
+            "GetSmartConnectEnabled.xml",
+            "is_smart_connect_enabled",
+            Service.WLAN_CONFIGURATION,
+            WlanConfigurationAction.IS_SMART_CONNECT_ENABLED,
+            """<M1:IsSmartConnectEnabled xmlns:M1="urn:NETGEAR-ROUTER:service:WLANConfiguration:1" />""",
+        ),
     ],
     ids=[
         "get_attached_devices",
@@ -159,6 +173,8 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
         "is_traffic_meter_enabled",
         "is_guest_access_enabled",
         "is_5g_guest_access_enabled",
+        "is_qos_enabled",
+        "is_smart_connect_enabled",
     ],
 )
 async def test_get_data(  # pylint: disable=too-many-positional-arguments

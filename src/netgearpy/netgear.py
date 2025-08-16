@@ -23,10 +23,13 @@ from netgearpy.const import (
     IS_5G_GUEST_ACCESS_ENABLED_BODY,
     IS_GUEST_ACCESS_ENABLED_BODY,
     IS_PARENTAL_CONTROL_ENABLED_BODY,
+    IS_QOS_ENABLED_BODY,
+    IS_SMART_CONNECT_ENABLED,
     IS_TRAFFIC_METER_ENABLED_BODY,
     LOGIN_BODY,
 )
 from netgearpy.models import (
+    AdvancedQoSAction,
     AttachedDevice,
     CurrentSettings,
     DeviceConfigAction,
@@ -224,6 +227,24 @@ class NetgearClient:
             IS_5G_GUEST_ACCESS_ENABLED_BODY,
         )
         return response.get("NewGuestAccessEnabled") == "1"
+
+    async def is_qos_enabled(self) -> bool:
+        """Check if QoS is enabled."""
+        response = await self._post_xml(
+            Service.ADVANCED_QOS,
+            AdvancedQoSAction.GET_QOS_ENABLE_STATUS,
+            IS_QOS_ENABLED_BODY,
+        )
+        return response.get("NewQoSEnableStatus") == "1"
+
+    async def is_smart_connect_enabled(self) -> bool:
+        """Check if Smart Connect is enabled."""
+        response = await self._post_xml(
+            Service.WLAN_CONFIGURATION,
+            WlanConfigurationAction.IS_SMART_CONNECT_ENABLED,
+            IS_SMART_CONNECT_ENABLED,
+        )
+        return response.get("NewSmartConnectEnable") == "1"
 
     async def get_ethernet_link_status(self) -> str:
         """Get the ethernet link status from the Netgear router."""

@@ -18,6 +18,7 @@ from netgearpy.const import (
     GET_BLOCK_DEVICE_ENABLE_BODY,
     GET_ETHERNET_LINK_STATUS_BODY,
     GET_INFO_BODY,
+    GET_SYSTEM_INFO_BODY,
     GET_TRAFFIC_METER_STATISTICS_BODY,
     IS_PARENTAL_CONTROL_ENABLED_BODY,
     IS_TRAFFIC_METER_ENABLED_BODY,
@@ -31,6 +32,7 @@ from netgearpy.models import (
     DeviceInfoAction,
     ParentalControlAction,
     Service,
+    SystemInfo,
     TrafficMeterStatistics,
     WanEthernetLinkConfigAction,
 )
@@ -185,6 +187,13 @@ class NetgearClient:
             GET_TRAFFIC_METER_STATISTICS_BODY,
         )
         return TrafficMeterStatistics.from_dict(response)
+
+    async def get_system_info(self) -> SystemInfo:
+        """Get system information from the Netgear router."""
+        response = await self._post_xml(
+            Service.DEVICE_INFO, DeviceInfoAction.GET_SYSTEM_INFO, GET_SYSTEM_INFO_BODY
+        )
+        return SystemInfo.from_dict(response)
 
     async def is_traffic_meter_enabled(self) -> bool:
         """Check if the traffic meter is enabled."""

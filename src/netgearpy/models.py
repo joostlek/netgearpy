@@ -320,3 +320,11 @@ class TrafficMeterStatistics(DataClassDictMixin):
             "total_download_last_month": total_download_last_month,
             "average_download_last_month": average_download_last_month,
         }
+
+
+@dataclass
+class SystemInfo(DataClassDictMixin):
+    """Represents the system information."""
+
+    cpu_usage: int = field(metadata=field_options(alias="NewCPUUtilization"))
+    memory_usage: int = field(metadata=field_options(alias="NewMemoryUtilization"))

@@ -36,6 +36,8 @@ GET_BLOCK_DEVICE_ENABLE_BODY = _get_empty_body(
     Service.DEVICE_CONFIG, "GetBlockDeviceEnableStatus"
 )
 
+GET_SYSTEM_INFO_BODY = """<M1:GetSystemInfo xsi:nil="true" />"""
+
 IS_TRAFFIC_METER_ENABLED_BODY = _get_empty_body(
     Service.DEVICE_CONFIG, "GetTrafficMeterEnabled"
 )

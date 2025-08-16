@@ -104,6 +104,13 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
             """<M1:GetTrafficMeterStatistics xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1" />""",
         ),
         (
+            "GetSystemInfo.xml",
+            "get_system_info",
+            "DeviceInfo",
+            "GetSystemInfo",
+            """<M1:GetSystemInfo xsi:nil="true" />""",
+        ),
+        (
             "GetEthernetLinkStatus.xml",
             "get_ethernet_link_status",
             "WANEthernetLinkConfig",
@@ -130,6 +137,7 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
         "get_device_info",
         "get_traffic_meter_statistics",
         "get_traffic_meter_statistics_2",
+        "get_system_info",
         "get_ethernet_link_status",
         "is_block_device_enabled",
         "is_traffic_meter_enabled",

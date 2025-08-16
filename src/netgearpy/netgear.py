@@ -15,6 +15,7 @@ from yarl import URL
 from netgearpy.const import (
     ENVELOPE,
     GET_ATTACHED_DEVICES_BODY,
+    GET_ETHERNET_LINK_STATUS_BODY,
     GET_INFO_BODY,
     GET_TRAFFIC_METER_STATISTICS_BODY,
     IS_PARENTAL_CONTROL_ENABLED_BODY,
@@ -29,6 +30,7 @@ from netgearpy.models import (
     ParentalControlAction,
     Service,
     TrafficMeterStatistics,
+    WanEthernetLinkConfigAction,
 )
 
 VERSION = metadata.version(__package__)
@@ -170,6 +172,16 @@ class NetgearClient:
             GET_TRAFFIC_METER_STATISTICS_BODY,
         )
         return TrafficMeterStatistics.from_dict(response)
+
+    async def get_ethernet_link_status(self) -> str:
+        """Get the ethernet link status from the Netgear router."""
+        response = await self._post_xml(
+            Service.WAN_ETHERNET_LINK_CONFIG,
+            WanEthernetLinkConfigAction.GET_ETHERNET_LINK_STATUS,
+            GET_ETHERNET_LINK_STATUS_BODY,
+        )
+        assert response["NewEthernetLinkStatus"] is not None  # noqa: S101
+        return response["NewEthernetLinkStatus"]
 
     async def close(self) -> None:
         """Close open client session."""

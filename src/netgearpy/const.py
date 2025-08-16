@@ -18,3 +18,7 @@ LOGIN_BODY = """<M1:SOAPLogin xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:
 CALL_BODY = """<M1:{} xmlns:M1="urn:NETGEAR-ROUTER:service:{}:1" />"""
 
 GET_ATTACHED_DEVICES_BODY = CALL_BODY.format("GetAttachedDevice", "DeviceInfo")
+
+IS_PARENTAL_CONTROL_ENABLED_BODY = (
+    """<v:Body><GetEnableStatus></GetEnableStatus></v:Body>"""
+)

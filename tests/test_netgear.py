@@ -87,3 +87,21 @@ async def test_get_attached_devices(
         "urn:NETGEAR-ROUTER:service:DeviceInfo:1#GetAttachedDevices",
         """<M1:GetAttachedDevice xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",  # noqa: E501
     )
+
+
+async def test_is_parental_control_enabled(
+    responses: aioresponses, netgear_client: NetgearClient
+) -> None:
+    """Test get attached devices."""
+    responses.get(
+        "http://192.168.0.1/currentsetting.htm",
+        status=200,
+        body=load_fixture("current_setting.txt"),
+    )
+    add_soap_response_fixture(responses, "ParentalControlGetEnableStatus.xml")
+    assert not await netgear_client.is_parental_control_enabled()
+    check_soap_called(
+        responses,
+        "urn:NETGEAR-ROUTER:service:ParentalControl:1#GetEnableStatus",
+        """<v:Body><GetEnableStatus></GetEnableStatus></v:Body>""",
+    )

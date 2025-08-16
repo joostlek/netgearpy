@@ -12,7 +12,12 @@ from aiohttp import ClientSession
 from aiohttp.hdrs import METH_GET, METH_POST
 from yarl import URL
 
-from netgearpy.const import ENVELOPE, GET_ATTACHED_DEVICES_BODY, LOGIN_BODY
+from netgearpy.const import (
+    ENVELOPE,
+    GET_ATTACHED_DEVICES_BODY,
+    IS_PARENTAL_CONTROL_ENABLED_BODY,
+    LOGIN_BODY,
+)
 from netgearpy.models import AttachedDevice, CurrentSettings
 
 VERSION = metadata.version(__package__)
@@ -127,6 +132,13 @@ class NetgearClient:
         return [
             AttachedDevice.from_string(entry) for entry in device_string.split("@")[1::]
         ]
+
+    async def is_parental_control_enabled(self) -> bool:
+        """Check if parental control is enabled."""
+        response = await self._post_xml(
+            "ParentalControl", "GetEnableStatus", IS_PARENTAL_CONTROL_ENABLED_BODY
+        )
+        return response.get("ParentalControl") == "1"
 
     async def close(self) -> None:
         """Close open client session."""

@@ -121,6 +121,12 @@
 # name: test_get_data[is_guest_access_enabled]
   False
 # ---
+# name: test_get_data[is_qos_enabled]
+  False
+# ---
+# name: test_get_data[is_smart_connect_enabled]
+  False
+# ---
 # name: test_get_data[is_traffic_meter_enabled]
   False
 # ---

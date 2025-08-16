@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap-env:Envelope
+        xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"
+        soap-env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+        >
+    <soap-env:Body>
+        <m:GetSupportFeatureListXMLResponse
+        xmlns:m="urn:NETGEAR-ROUTER:service:DeviceInfo:1">
+            <newFeatureList>
+                <features>
+                    <DynamicQoS>1.0</DynamicQoS>
+                    <OpenDNSParentalControl>1.0</OpenDNSParentalControl>
+                    <CircleParentalControl>2.0</CircleParentalControl>
+                    <MaxMonthlyTrafficLimitation>4095000000</MaxMonthlyTrafficLimitation>
+                    <AccessControl>1.0</AccessControl>
+                    <SpeedTest>2.0</SpeedTest>
+                    <BitDefenderSecurity>1.0</BitDefenderSecurity>
+                    <GuestNetworkSchedule>1.0</GuestNetworkSchedule>
+                    <TCAcceptance>1.0</TCAcceptance>
+                    <SmartConnect>2.0</SmartConnect>
+                    <AttachedDevice>2.0</AttachedDevice>
+                    <NameNTGRDevice>1.0</NameNTGRDevice>
+                    <DeviceTypeIcon>2.1</DeviceTypeIcon>
+                    <TimeZone>3.0</TimeZone>
+                    <SupportRAOptinOptout>1.0</SupportRAOptinOptout>
+                    <PasswordReset>2.0</PasswordReset>
+                </features>
+            </newFeatureList>
+        </m:GetSupportFeatureListXMLResponse>
+        <ResponseCode>000</ResponseCode>
+    </soap-env:Body>
+</soap-env:Envelope>

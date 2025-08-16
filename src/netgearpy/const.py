@@ -25,6 +25,8 @@ GET_TRAFFIC_METER_STATISTICS = CALL_BODY.format(
     "GetTrafficMeterStatistics", "DeviceConfig"
 )
 
+GET_SYSTEM_INFO_BODY = """<M1:GetSystemInfo xsi:nil="true" />"""
+
 IS_PARENTAL_CONTROL_ENABLED_BODY = (
     """<v:Body><GetEnableStatus></GetEnableStatus></v:Body>"""
 )

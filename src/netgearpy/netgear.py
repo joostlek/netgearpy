@@ -15,10 +15,11 @@ from yarl import URL
 from netgearpy.const import (
     ENVELOPE,
     GET_ATTACHED_DEVICES_BODY,
+    GET_INFO_BODY,
     IS_PARENTAL_CONTROL_ENABLED_BODY,
     LOGIN_BODY,
 )
-from netgearpy.models import AttachedDevice, CurrentSettings
+from netgearpy.models import AttachedDevice, CurrentSettings, DeviceInfo
 
 VERSION = metadata.version(__package__)
 
@@ -139,6 +140,11 @@ class NetgearClient:
             "ParentalControl", "GetEnableStatus", IS_PARENTAL_CONTROL_ENABLED_BODY
         )
         return response.get("ParentalControl") == "1"
+
+    async def get_device_info(self) -> DeviceInfo:
+        """Get device information from the Netgear router."""
+        response = await self._post_xml("DeviceInfo", "GetInfo", GET_INFO_BODY)
+        return DeviceInfo.from_dict(response)
 
     async def close(self) -> None:
         """Close open client session."""

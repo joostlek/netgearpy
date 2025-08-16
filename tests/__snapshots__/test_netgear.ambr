@@ -1,5 +1,13 @@
 # serializer version: 1
-# name: test_get_attached_devices
+# name: test_get_current_setting
+  dict({
+    'firmware_version': 'V1.0.12.216_10.2.122',
+    'https_port': 5555,
+    'login_method': 2,
+    'model': 'R7000',
+  })
+# ---
+# name: test_get_data[get_attached_devices]
   list([
     dict({
       'blocked': False,
@@ -30,11 +38,18 @@
     }),
   ])
 # ---
-# name: test_get_current_setting
+# name: test_get_data[get_device_info]
   dict({
-    'firmware_version': 'V1.0.12.216_10.2.122',
-    'https_port': 5555,
-    'login_method': 2,
+    'device_mode': <DeviceMode.ROUTER: 0>,
+    'device_name': 'Milky way',
+    'firewall_version': 'ACOS NAT-Netfilter v5',
+    'firmware_version': 'V1.0.12.216',
+    'hardware_version': 'R7000',
     'model': 'R7000',
+    'other_hardware_version': None,
+    'other_software_version': '10.2.122',
+    'serial_number': '44596C7W70A47',
+    'smart_agent_version': '3.0',
+    'vpn_version': None,
   })
 # ---

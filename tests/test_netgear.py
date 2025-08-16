@@ -79,8 +79,8 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
             "GetAttachDevice.xml",
             "get_attached_devices",
             "DeviceInfo",
-            "GetAttachedDevices",
-            """<M1:GetAttachedDevice xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",
+            "GetAttachDevice",
+            """<M1:GetAttachDevice xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",
         ),
         (
             "DeviceInfo.xml",

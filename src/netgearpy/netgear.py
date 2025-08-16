@@ -16,14 +16,18 @@ from netgearpy.const import (
     ENVELOPE,
     GET_ATTACHED_DEVICES_BODY,
     GET_INFO_BODY,
-    GET_TRAFFIC_METER_STATISTICS,
+    GET_TRAFFIC_METER_STATISTICS_BODY,
     IS_PARENTAL_CONTROL_ENABLED_BODY,
     LOGIN_BODY,
 )
 from netgearpy.models import (
     AttachedDevice,
     CurrentSettings,
+    DeviceConfigAction,
     DeviceInfo,
+    DeviceInfoAction,
+    ParentalControlAction,
+    Service,
     TrafficMeterStatistics,
 )
 
@@ -123,14 +127,16 @@ class NetgearClient:
     async def login(self, username: str, password: str) -> None:
         """Login to the Netgear router."""
         await self._post_xml(
-            "DeviceConfig", "SOAPLogin", LOGIN_BODY.format(username, password)
+            Service.DEVICE_CONFIG,
+            DeviceConfigAction.LOGIN,
+            LOGIN_BODY.format(username, password),
         )
 
     async def get_attached_devices(self) -> list[AttachedDevice]:
         """Get the attached devices from the Netgear router."""
         response = await self._post_xml(
-            "DeviceInfo",
-            "GetAttachedDevices",
+            Service.DEVICE_INFO,
+            DeviceInfoAction.GET_ATTACHED_DEVICES,
             GET_ATTACHED_DEVICES_BODY,
         )
         device_string = response["NewAttachDevice"]
@@ -143,19 +149,25 @@ class NetgearClient:
     async def is_parental_control_enabled(self) -> bool:
         """Check if parental control is enabled."""
         response = await self._post_xml(
-            "ParentalControl", "GetEnableStatus", IS_PARENTAL_CONTROL_ENABLED_BODY
+            Service.PARENTAL_CONTROL,
+            ParentalControlAction.GET_ENABLE_STATUS,
+            IS_PARENTAL_CONTROL_ENABLED_BODY,
         )
         return response.get("ParentalControl") == "1"
 
     async def get_device_info(self) -> DeviceInfo:
         """Get device information from the Netgear router."""
-        response = await self._post_xml("DeviceInfo", "GetInfo", GET_INFO_BODY)
+        response = await self._post_xml(
+            Service.DEVICE_INFO, DeviceInfoAction.GET_INFO, GET_INFO_BODY
+        )
         return DeviceInfo.from_dict(response)
 
     async def get_traffic_meter_statistics(self) -> TrafficMeterStatistics:
         """Get traffic meter statistics from the Netgear router."""
         response = await self._post_xml(
-            "DeviceConfig", "GetTrafficMeterStatistics", GET_TRAFFIC_METER_STATISTICS
+            Service.DEVICE_CONFIG,
+            DeviceConfigAction.GET_TRAFFIC_METER_STATISTICS,
+            GET_TRAFFIC_METER_STATISTICS_BODY,
         )
         return TrafficMeterStatistics.from_dict(response)
 

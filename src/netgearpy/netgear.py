@@ -6,13 +6,14 @@ import asyncio
 from dataclasses import dataclass
 from importlib import metadata
 from typing import Any, Self
+import xml.etree.ElementTree as ET
 
 from aiohttp import ClientSession
 from aiohttp.hdrs import METH_GET, METH_POST
 from yarl import URL
 
-from netgearpy.const import ENVELOPE, LOGIN_BODY
-from netgearpy.models import CurrentSettings
+from netgearpy.const import ENVELOPE, GET_ATTACHED_DEVICES_BODY, LOGIN_BODY
+from netgearpy.models import AttachedDevice, CurrentSettings
 
 VERSION = metadata.version(__package__)
 
@@ -77,7 +78,9 @@ class NetgearClient:
         self._login_method = result.login_method
         return result
 
-    async def _post_xml(self, service: str, action: str, body: str) -> str:
+    async def _post_xml(
+        self, service: str, action: str, body: str
+    ) -> dict[str, str | None]:
         """Post XML data to the Netgear router."""
         if self._soap_port is None or self._login_method is None:
             await self.get_current_setting()
@@ -92,15 +95,38 @@ class NetgearClient:
             "SOAPAction": f"urn:NETGEAR-ROUTER:service:{service}:1#{action}",
         }
         body_str = ENVELOPE.format(body)
-        return await self._request(
+        response = await self._request(
             str(url), method=METH_POST, data=body_str, headers=headers
         )
+        response_dict = {}
+        root = ET.fromstring(response)  # noqa: S314
+        for item in root.iter():
+            if item.tag != "{http://schemas.xmlsoap.org/soap/envelope/}Body":
+                continue
+            for child in item:
+                for subchild in child:
+                    response_dict[subchild.tag] = subchild.text
+        return response_dict
 
     async def login(self, username: str, password: str) -> None:
         """Login to the Netgear router."""
         await self._post_xml(
             "DeviceConfig", "SOAPLogin", LOGIN_BODY.format(username, password)
         )
+
+    async def get_attached_devices(self) -> list[AttachedDevice]:
+        """Get the attached devices from the Netgear router."""
+        response = await self._post_xml(
+            "DeviceInfo",
+            "GetAttachedDevices",
+            GET_ATTACHED_DEVICES_BODY,
+        )
+        device_string = response["NewAttachDevice"]
+        if not device_string:
+            return []
+        return [
+            AttachedDevice.from_string(entry) for entry in device_string.split("@")[1::]
+        ]
 
     async def close(self) -> None:
         """Close open client session."""

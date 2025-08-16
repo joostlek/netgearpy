@@ -69,3 +69,21 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
         """<M1:SOAPLogin xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1">
 <Username>username</Username><Password>password</Password></M1:SOAPLogin>""",
     )
+
+
+async def test_get_attached_devices(
+    responses: aioresponses, snapshot: SnapshotAssertion, netgear_client: NetgearClient
+) -> None:
+    """Test get attached devices."""
+    responses.get(
+        "http://192.168.0.1/currentsetting.htm",
+        status=200,
+        body=load_fixture("current_setting.txt"),
+    )
+    add_soap_response_fixture(responses, "GetAttachDevice.xml")
+    assert await netgear_client.get_attached_devices() == snapshot
+    check_soap_called(
+        responses,
+        "urn:NETGEAR-ROUTER:service:DeviceInfo:1#GetAttachedDevices",
+        """<M1:GetAttachedDevice xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",  # noqa: E501
+    )

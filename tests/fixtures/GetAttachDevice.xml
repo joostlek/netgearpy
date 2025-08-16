@@ -6,7 +6,7 @@
     <soap-env:Body>
         <m:GetAttachDeviceResponse
         xmlns:m="urn:NETGEAR-ROUTER:service:DeviceInfo:1">
-            <NewAttachDevice>1@1;192.168.0.2;motorola-edge-50-fusion;D6:2E:BD:9B:0A:63;wireless;192;100;Allow</NewAttachDevice>
+            <NewAttachDevice>3@1;192.168.0.2;motorola-edge-50-fusion;D6:2E:BD:9B:0A:63;wireless;192;100;Allow@1;192.168.0.2;motorola-edge-50-fusion;D6:2E:BD:9B:0A:63@1;192.168.0.2;motorola-edge-50-fusion;D6:2E:BD:9B:0A:63;wireless;192;100</NewAttachDevice>
         </m:GetAttachDeviceResponse>
         <ResponseCode>000</ResponseCode>
     </soap-env:Body>

@@ -40,12 +40,12 @@ class AttachedDevice:
     """Represents an attached device."""
 
     ip_address: str
-    hostname: str | None = None
+    hostname: str | None
     mac_address: str
-    connection_type: ConnectionType
-    link_speed: int | None = None
-    signal_strength: int
-    blocked: bool
+    connection_type: ConnectionType | None
+    link_speed: int | None
+    signal_strength: int | None
+    blocked: bool | None
 
     @classmethod
     def from_string(cls, source_string: str) -> AttachedDevice:
@@ -56,12 +56,17 @@ class AttachedDevice:
         if parts[2] != "--":
             hostname = parts[2]
         mac_address = parts[3]
-        connection_type = ConnectionType(parts[4])
+        connection_type = None
         link_speed = None
-        if parts[5] != "":
-            link_speed = int(parts[5])
-        signal_strength = int(parts[6])
-        blocked = parts[7] != "Allow"
+        signal_strength = None
+        blocked = None
+        if len(parts) >= 7:
+            connection_type = ConnectionType(parts[4])
+            if parts[5] != "":
+                link_speed = int(parts[5])
+            signal_strength = int(parts[6])
+            if len(parts) >= 8:
+                blocked = parts[7] != "Allow"
         return AttachedDevice(
             ip_address=ip_address,
             hostname=hostname,

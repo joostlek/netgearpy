@@ -21,6 +21,10 @@ GET_ATTACHED_DEVICES_BODY = CALL_BODY.format("GetAttachedDevice", "DeviceInfo")
 
 GET_INFO_BODY = CALL_BODY.format("GetInfo", "DeviceInfo")
 
+GET_TRAFFIC_METER_STATISTICS = CALL_BODY.format(
+    "GetTrafficMeterStatistics", "DeviceConfig"
+)
+
 IS_PARENTAL_CONTROL_ENABLED_BODY = (
     """<v:Body><GetEnableStatus></GetEnableStatus></v:Body>"""
 )

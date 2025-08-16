@@ -89,10 +89,26 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
             "GetInfo",
             """<M1:GetInfo xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",
         ),
+        (
+            "GetTrafficMeterStatistics.xml",
+            "get_traffic_meter_statistics",
+            "DeviceConfig",
+            "GetTrafficMeterStatistics",
+            """<M1:GetTrafficMeterStatistics xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1" />""",
+        ),
+        (
+            "GetTrafficMeterStatistics2.xml",
+            "get_traffic_meter_statistics",
+            "DeviceConfig",
+            "GetTrafficMeterStatistics",
+            """<M1:GetTrafficMeterStatistics xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1" />""",
+        ),
     ],
     ids=[
         "get_attached_devices",
         "get_device_info",
+        "get_traffic_meter_statistics",
+        "get_traffic_meter_statistics_2",
     ],
 )
 async def test_get_data(  # pylint: disable=too-many-positional-arguments

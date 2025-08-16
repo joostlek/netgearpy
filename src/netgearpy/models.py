@@ -9,6 +9,8 @@ from typing import Any
 from mashumaro import field_options
 from mashumaro.mixins.dict import DataClassDictMixin
 
+from netgearpy.helpers import statistics_to_data, time_to_minutes
+
 
 @dataclass
 class CurrentSettings(DataClassDictMixin):
@@ -113,3 +115,86 @@ class DeviceInfo(DataClassDictMixin):
         if d["Otherhardwareversion"] == "N/A":
             d["Otherhardwareversion"] = None
         return {**d, "DeviceMode": int(d["DeviceMode"])}
+
+
+@dataclass
+class TrafficMeterStatistics(DataClassDictMixin):
+    """Represents the traffic meter statistics."""
+
+    connection_time_today: int = field(
+        metadata=field_options(alias="NewTodayConnectionTime")
+    )
+    upload_today: float = field(metadata=field_options(alias="NewTodayUpload"))
+    download_today: float = field(metadata=field_options(alias="NewTodayDownload"))
+    connection_time_yesterday: int = field(
+        metadata=field_options(alias="NewYesterdayConnectionTime")
+    )
+    upload_yesterday: float = field(metadata=field_options(alias="NewYesterdayUpload"))
+    download_yesterday: float = field(
+        metadata=field_options(alias="NewYesterdayDownload")
+    )
+    connection_time_week: int = field(
+        metadata=field_options(alias="NewWeekConnectionTime")
+    )
+    total_upload_week: float
+    average_upload_week: float
+    total_download_week: float
+    average_download_week: float
+    connection_time_month: int = field(
+        metadata=field_options(alias="NewMonthConnectionTime")
+    )
+    total_upload_month: float
+    average_upload_month: float
+    total_download_month: float
+    average_download_month: float
+    connection_time_last_month: int = field(
+        metadata=field_options(alias="NewLastMonthConnectionTime")
+    )
+    total_upload_last_month: float
+    average_upload_last_month: float
+    total_download_last_month: float
+    average_download_last_month: float
+
+    @classmethod
+    def __pre_deserialize__(cls, d: dict[str, Any]) -> dict[str, Any]:
+        """Pre deserialize hook."""
+        total_upload_week, average_upload_week = statistics_to_data(d["NewWeekUpload"])
+        total_download_week, average_download_week = statistics_to_data(
+            d["NewWeekDownload"]
+        )
+        total_upload_month, average_upload_month = statistics_to_data(
+            d["NewMonthUpload"]
+        )
+        total_download_month, average_download_month = statistics_to_data(
+            d["NewMonthDownload"]
+        )
+        total_upload_last_month, average_upload_last_month = statistics_to_data(
+            d["NewLastMonthUpload"]
+        )
+        total_download_last_month, average_download_last_month = statistics_to_data(
+            d["NewLastMonthDownload"]
+        )
+        return {
+            **d,
+            "NewTodayConnectionTime": time_to_minutes(d["NewTodayConnectionTime"]),
+            "NewYesterdayConnectionTime": time_to_minutes(
+                d["NewYesterdayConnectionTime"]
+            ),
+            "NewWeekConnectionTime": time_to_minutes(d["NewWeekConnectionTime"]),
+            "total_upload_week": total_upload_week,
+            "average_upload_week": average_upload_week,
+            "total_download_week": total_download_week,
+            "average_download_week": average_download_week,
+            "NewMonthConnectionTime": time_to_minutes(d["NewMonthConnectionTime"]),
+            "total_upload_month": total_upload_month,
+            "average_upload_month": average_upload_month,
+            "total_download_month": total_download_month,
+            "average_download_month": average_download_month,
+            "NewLastMonthConnectionTime": time_to_minutes(
+                d["NewLastMonthConnectionTime"]
+            ),
+            "total_upload_last_month": total_upload_last_month,
+            "average_upload_last_month": average_upload_last_month,
+            "total_download_last_month": total_download_last_month,
+            "average_download_last_month": average_download_last_month,
+        }

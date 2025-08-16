@@ -16,10 +16,16 @@ from netgearpy.const import (
     ENVELOPE,
     GET_ATTACHED_DEVICES_BODY,
     GET_INFO_BODY,
+    GET_TRAFFIC_METER_STATISTICS,
     IS_PARENTAL_CONTROL_ENABLED_BODY,
     LOGIN_BODY,
 )
-from netgearpy.models import AttachedDevice, CurrentSettings, DeviceInfo
+from netgearpy.models import (
+    AttachedDevice,
+    CurrentSettings,
+    DeviceInfo,
+    TrafficMeterStatistics,
+)
 
 VERSION = metadata.version(__package__)
 
@@ -145,6 +151,13 @@ class NetgearClient:
         """Get device information from the Netgear router."""
         response = await self._post_xml("DeviceInfo", "GetInfo", GET_INFO_BODY)
         return DeviceInfo.from_dict(response)
+
+    async def get_traffic_meter_statistics(self) -> TrafficMeterStatistics:
+        """Get traffic meter statistics from the Netgear router."""
+        response = await self._post_xml(
+            "DeviceConfig", "GetTrafficMeterStatistics", GET_TRAFFIC_METER_STATISTICS
+        )
+        return TrafficMeterStatistics.from_dict(response)
 
     async def close(self) -> None:
         """Close open client session."""

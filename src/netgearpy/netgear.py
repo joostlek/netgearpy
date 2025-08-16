@@ -20,6 +20,8 @@ from netgearpy.const import (
     GET_INFO_BODY,
     GET_SYSTEM_INFO_BODY,
     GET_TRAFFIC_METER_STATISTICS_BODY,
+    IS_5G_GUEST_ACCESS_ENABLED_BODY,
+    IS_GUEST_ACCESS_ENABLED_BODY,
     IS_PARENTAL_CONTROL_ENABLED_BODY,
     IS_TRAFFIC_METER_ENABLED_BODY,
     LOGIN_BODY,
@@ -35,6 +37,7 @@ from netgearpy.models import (
     SystemInfo,
     TrafficMeterStatistics,
     WanEthernetLinkConfigAction,
+    WlanConfigurationAction,
 )
 
 VERSION = metadata.version(__package__)
@@ -203,6 +206,24 @@ class NetgearClient:
             IS_TRAFFIC_METER_ENABLED_BODY,
         )
         return response.get("NewTrafficMeterEnable") == "1"
+
+    async def is_guest_access_enabled(self) -> bool:
+        """Check if guest access is enabled."""
+        response = await self._post_xml(
+            Service.WLAN_CONFIGURATION,
+            WlanConfigurationAction.GET_GUEST_ACCESS_ENABLED,
+            IS_GUEST_ACCESS_ENABLED_BODY,
+        )
+        return response.get("NewGuestAccessEnabled") == "1"
+
+    async def is_5g_guest_access_enabled(self) -> bool:
+        """Check if 5G guest access is enabled."""
+        response = await self._post_xml(
+            Service.WLAN_CONFIGURATION,
+            WlanConfigurationAction.GET_5G1_GUEST_ACCESS_ENABLED_2,
+            IS_5G_GUEST_ACCESS_ENABLED_BODY,
+        )
+        return response.get("NewGuestAccessEnabled") == "1"
 
     async def get_ethernet_link_status(self) -> str:
         """Get the ethernet link status from the Netgear router."""

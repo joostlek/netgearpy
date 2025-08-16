@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import StrEnum
+from enum import IntEnum, StrEnum
 from typing import Any
 
 from mashumaro import field_options
@@ -76,3 +76,40 @@ class AttachedDevice:
             signal_strength=signal_strength,
             blocked=blocked,
         )
+
+
+class DeviceMode(IntEnum):
+    """Enum for device modes."""
+
+    ROUTER = 0
+    ACCESS_POINT = 1
+
+
+@dataclass
+class DeviceInfo(DataClassDictMixin):
+    """Represents the device information."""
+
+    model: str = field(metadata=field_options(alias="ModelName"))
+    serial_number: str = field(metadata=field_options(alias="SerialNumber"))
+    firmware_version: str = field(metadata=field_options(alias="Firmwareversion"))
+    smart_agent_version: str = field(metadata=field_options(alias="SmartAgentversion"))
+    firewall_version: str = field(metadata=field_options(alias="FirewallVersion"))
+    vpn_version: str | None = field(metadata=field_options(alias="VPNVersion"))
+    other_software_version: str = field(
+        metadata=field_options(alias="OthersoftwareVersion")
+    )
+    hardware_version: str = field(metadata=field_options(alias="Hardwareversion"))
+    other_hardware_version: str | None = field(
+        metadata=field_options(alias="Otherhardwareversion")
+    )
+    device_name: str = field(metadata=field_options(alias="DeviceName"))
+    device_mode: DeviceMode = field(metadata=field_options(alias="DeviceMode"))
+
+    @classmethod
+    def __pre_deserialize__(cls, d: dict[str, Any]) -> dict[str, Any]:
+        """Pre deserialize hook."""
+        if d["VPNVersion"] == "N/A":
+            d["VPNVersion"] = None
+        if d["Otherhardwareversion"] == "N/A":
+            d["Otherhardwareversion"] = None
+        return {**d, "DeviceMode": int(d["DeviceMode"])}

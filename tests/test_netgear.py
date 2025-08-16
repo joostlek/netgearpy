@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from aiohttp.hdrs import METH_POST
 from aioresponses import aioresponses
+import pytest
 
 from . import load_fixture
 from .const import HEADERS, MOCK_URL
@@ -71,8 +72,38 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
     )
 
 
-async def test_get_attached_devices(
-    responses: aioresponses, snapshot: SnapshotAssertion, netgear_client: NetgearClient
+@pytest.mark.parametrize(
+    ("fixture_name", "method", "soap_service", "soap_action", "expected_body"),
+    [
+        (
+            "GetAttachDevice.xml",
+            "get_attached_devices",
+            "DeviceInfo",
+            "GetAttachedDevices",
+            """<M1:GetAttachedDevice xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",
+        ),
+        (
+            "DeviceInfo.xml",
+            "get_device_info",
+            "DeviceInfo",
+            "GetInfo",
+            """<M1:GetInfo xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",
+        ),
+    ],
+    ids=[
+        "get_attached_devices",
+        "get_device_info",
+    ],
+)
+async def test_get_data(  # pylint: disable=too-many-positional-arguments
+    responses: aioresponses,
+    snapshot: SnapshotAssertion,
+    netgear_client: NetgearClient,
+    fixture_name: str,
+    method: str,
+    soap_service: str,
+    soap_action: str,
+    expected_body: str,
 ) -> None:
     """Test get attached devices."""
     responses.get(
@@ -80,12 +111,12 @@ async def test_get_attached_devices(
         status=200,
         body=load_fixture("current_setting.txt"),
     )
-    add_soap_response_fixture(responses, "GetAttachDevice.xml")
-    assert await netgear_client.get_attached_devices() == snapshot
+    add_soap_response_fixture(responses, fixture_name)
+    assert await getattr(netgear_client, method)() == snapshot
     check_soap_called(
         responses,
-        "urn:NETGEAR-ROUTER:service:DeviceInfo:1#GetAttachedDevices",
-        """<M1:GetAttachedDevice xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",  # noqa: E501
+        f"urn:NETGEAR-ROUTER:service:{soap_service}:1#{soap_action}",
+        expected_body,
     )
 
 

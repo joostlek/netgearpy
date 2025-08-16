@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 from dataclasses import dataclass
 from importlib import metadata
+import logging
 from typing import Any, Self
 import xml.etree.ElementTree as ET
 
@@ -44,6 +45,8 @@ from netgearpy.models import (
 )
 
 VERSION = metadata.version(__package__)
+
+_LOGGER = logging.getLogger(__package__)
 
 
 @dataclass
@@ -125,9 +128,17 @@ class NetgearClient:
         }
         body_str = ENVELOPE.format(body)
         async with self._lock:
+            await asyncio.sleep(0.3)
+            _LOGGER.debug(
+                "Posting XML to %s with action `%s` and body: %s",
+                url,
+                f"urn:NETGEAR-ROUTER:service:{service}:1#{action}",
+                body_str,
+            )
             response = await self._request(
                 str(url), method=METH_POST, data=body_str, headers=headers
             )
+        _LOGGER.debug("Response from %s: %s", url, response)
         response_dict = {}
         root = ET.fromstring(response)  # noqa: S314
         for item in root.iter():

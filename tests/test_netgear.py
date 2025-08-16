@@ -117,6 +117,13 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
             "GetBlockDeviceEnableStatus",
             """<M1:GetBlockDeviceEnableStatus xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1" />""",
         ),
+        (
+            "GetTrafficMeterEnabled.xml",
+            "is_traffic_meter_enabled",
+            "DeviceConfig",
+            "GetTrafficMeterEnabled",
+            """<M1:GetTrafficMeterEnabled xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1" />""",
+        ),
     ],
     ids=[
         "get_attached_devices",
@@ -125,6 +132,7 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
         "get_traffic_meter_statistics_2",
         "get_ethernet_link_status",
         "is_block_device_enabled",
+        "is_traffic_meter_enabled",
     ],
 )
 async def test_get_data(  # pylint: disable=too-many-positional-arguments

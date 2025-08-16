@@ -82,3 +82,8 @@ async def test_get_attached_devices(
     )
     add_soap_response_fixture(responses, "GetAttachDevice.xml")
     assert await netgear_client.get_attached_devices() == snapshot
+    check_soap_called(
+        responses,
+        "urn:NETGEAR-ROUTER:service:DeviceInfo:1#GetAttachedDevices",
+        """<M1:GetAttachedDevice xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",  # noqa: E501
+    )

@@ -103,12 +103,20 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
             "GetTrafficMeterStatistics",
             """<M1:GetTrafficMeterStatistics xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1" />""",
         ),
+        (
+            "GetEthernetLinkStatus.xml",
+            "get_ethernet_link_status",
+            "WANEthernetLinkConfig",
+            "GetEthernetLinkStatus",
+            """<M1:GetEthernetLinkStatus xsi:nil="true" />""",
+        ),
     ],
     ids=[
         "get_attached_devices",
         "get_device_info",
         "get_traffic_meter_statistics",
         "get_traffic_meter_statistics_2",
+        "get_ethernet_link_status",
     ],
 )
 async def test_get_data(  # pylint: disable=too-many-positional-arguments
@@ -150,5 +158,5 @@ async def test_is_parental_control_enabled(
     check_soap_called(
         responses,
         "urn:NETGEAR-ROUTER:service:ParentalControl:1#GetEnableStatus",
-        """<v:Body><GetEnableStatus></GetEnableStatus></v:Body>""",
+        """<GetEnableStatus></GetEnableStatus>""",
     )

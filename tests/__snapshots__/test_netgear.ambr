@@ -53,6 +53,9 @@
     'vpn_version': None,
   })
 # ---
+# name: test_get_data[get_ethernet_link_status]
+  'Up'
+# ---
 # name: test_get_data[get_traffic_meter_statistics]
   dict({
     'average_download_last_month': 0.0,

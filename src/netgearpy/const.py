@@ -56,6 +56,18 @@ IS_SMART_CONNECT_ENABLED = _get_empty_body(
     Service.WLAN_CONFIGURATION, "IsSmartConnectEnabled"
 )
 
+REBOOT_BODY = _get_empty_body(Service.DEVICE_CONFIG, "Reboot")
+
 IS_PARENTAL_CONTROL_ENABLED_BODY = """<GetEnableStatus></GetEnableStatus>"""
 
 GET_ETHERNET_LINK_STATUS_BODY = """<M1:GetEthernetLinkStatus xsi:nil="true" />"""
+
+START_DEVICE_CONFIGURATION_BODY = """<M1:ConfigurationStarted \
+xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1">
+<NewSessionID>A7D88AE69687E58D9A00</NewSessionID>
+</M1:ConfigurationStarted>"""
+
+FINISH_DEVICE_CONFIGURATION_BODY = """<M1:ConfigurationFinished \
+xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1">
+<NewStatus>ChangesApplied</NewStatus>
+</M1:ConfigurationFinished>"""

@@ -1,4 +1,7 @@
 # serializer version: 1
+# name: test_device_configuration_mode_calls[reboot]
+  None
+# ---
 # name: test_get_current_setting
   dict({
     'firmware_version': 'V1.0.12.216_10.2.122',

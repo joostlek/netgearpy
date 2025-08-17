@@ -8,7 +8,12 @@ from aiohttp.hdrs import METH_POST
 from aioresponses import aioresponses
 import pytest
 
-from netgearpy.models import AdvancedQoSAction, Service, WlanConfigurationAction
+from netgearpy.models import (
+    AdvancedQoSAction,
+    DeviceConfigAction,
+    Service,
+    WlanConfigurationAction,
+)
 
 from . import load_fixture
 from .const import HEADERS, MOCK_URL
@@ -199,6 +204,44 @@ async def test_get_data(  # pylint: disable=too-many-positional-arguments
         responses,
         f"urn:NETGEAR-ROUTER:service:{soap_service}:1#{soap_action}",
         expected_body,
+    )
+
+
+@pytest.mark.parametrize(
+    ("fixture_name", "method"),
+    [
+        (
+            "Reboot.xml",
+            "reboot",
+        ),
+    ],
+    ids=[
+        "reboot",
+    ],
+)
+async def test_device_configuration_mode_calls(  # pylint: disable=too-many-positional-arguments
+    responses: aioresponses,
+    snapshot: SnapshotAssertion,
+    netgear_client: NetgearClient,
+    fixture_name: str,
+    method: str,
+) -> None:
+    """Test device configuration mode calls."""
+    responses.get(
+        "http://192.168.0.1/currentsetting.htm",
+        status=200,
+        body=load_fixture("current_setting.txt"),
+    )
+    add_soap_response_fixture(responses, "ConfigurationStart.xml")
+    add_soap_response_fixture(responses, fixture_name)
+    add_soap_response_fixture(responses, "ConfigurationFinished.xml")
+    assert await getattr(netgear_client, method)() == snapshot
+    check_soap_called(
+        responses,
+        f"urn:NETGEAR-ROUTER:service:{Service.DEVICE_CONFIG}:1#{DeviceConfigAction.CONFIGURATION_FINISHED}",
+        """<M1:ConfigurationFinished xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceConfig:1">
+<NewStatus>ChangesApplied</NewStatus>
+</M1:ConfigurationFinished>""",
     )
 
 

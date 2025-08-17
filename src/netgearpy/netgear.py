@@ -6,7 +6,7 @@ import asyncio
 from dataclasses import dataclass
 from importlib import metadata
 import logging
-from typing import Any, Self
+from typing import TYPE_CHECKING, Any, Callable, Concatenate, Self
 import xml.etree.ElementTree as ET
 
 from aiohttp import ClientSession
@@ -15,6 +15,7 @@ from yarl import URL
 
 from netgearpy.const import (
     ENVELOPE,
+    FINISH_DEVICE_CONFIGURATION_BODY,
     GET_ATTACHED_DEVICES_BODY,
     GET_BLOCK_DEVICE_ENABLE_BODY,
     GET_ETHERNET_LINK_STATUS_BODY,
@@ -28,6 +29,8 @@ from netgearpy.const import (
     IS_SMART_CONNECT_ENABLED,
     IS_TRAFFIC_METER_ENABLED_BODY,
     LOGIN_BODY,
+    REBOOT_BODY,
+    START_DEVICE_CONFIGURATION_BODY,
 )
 from netgearpy.models import (
     AdvancedQoSAction,
@@ -44,9 +47,28 @@ from netgearpy.models import (
     WlanConfigurationAction,
 )
 
+if TYPE_CHECKING:
+    from collections.abc import Awaitable
+
 VERSION = metadata.version(__package__)
 
 _LOGGER = logging.getLogger(__package__)
+
+SLEEP_BETWEEN_CALLS = 0.3
+
+
+def device_configuration_mode[**P, R](
+    func: Callable[Concatenate[NetgearClient, P], Awaitable[R]],
+) -> Callable[Concatenate[NetgearClient, P], Awaitable[R]]:
+    """Handle device configuration mode for NetgearClient methods."""
+
+    async def wrapper(self: NetgearClient, *args: P.args, **kwargs: P.kwargs) -> R:
+        await self._start_configuration()  # pylint:disable=protected-access
+        res = await func(self, *args, **kwargs)
+        await self._finish_configuration()  # pylint:disable=protected-access
+        return res
+
+    return wrapper
 
 
 @dataclass
@@ -128,7 +150,7 @@ class NetgearClient:
         }
         body_str = ENVELOPE.format(body)
         async with self._lock:
-            await asyncio.sleep(0.3)
+            await asyncio.sleep(SLEEP_BETWEEN_CALLS)
             if service != DeviceConfigAction.LOGIN:
                 _LOGGER.debug(
                     "Posting XML to %s with action `%s` and body: %s",
@@ -267,6 +289,29 @@ class NetgearClient:
         )
         assert response["NewEthernetLinkStatus"] is not None  # noqa: S101
         return response["NewEthernetLinkStatus"]
+
+    async def _start_configuration(self) -> None:
+        await self._post_xml(
+            Service.DEVICE_CONFIG,
+            DeviceConfigAction.CONFIGURATION_STARTED,
+            START_DEVICE_CONFIGURATION_BODY,
+        )
+
+    async def _finish_configuration(self) -> None:
+        await self._post_xml(
+            Service.DEVICE_CONFIG,
+            DeviceConfigAction.CONFIGURATION_FINISHED,
+            FINISH_DEVICE_CONFIGURATION_BODY,
+        )
+
+    @device_configuration_mode
+    async def reboot(self) -> None:
+        """Reboot the Netgear router."""
+        await self._post_xml(
+            Service.DEVICE_CONFIG,
+            DeviceConfigAction.REBOOT,
+            REBOOT_BODY,
+        )
 
     async def close(self) -> None:
         """Close open client session."""

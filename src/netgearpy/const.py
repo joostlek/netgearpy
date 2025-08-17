@@ -25,6 +25,7 @@ def _get_empty_body(service: Service, object_type: str) -> str:
 
 
 GET_ATTACHED_DEVICES_BODY = _get_empty_body(Service.DEVICE_INFO, "GetAttachDevice")
+GET_ATTACHED_DEVICES_2_BODY = _get_empty_body(Service.DEVICE_INFO, "GetAttachDevice2")
 
 GET_INFO_BODY = _get_empty_body(Service.DEVICE_INFO, "GetInfo")
 

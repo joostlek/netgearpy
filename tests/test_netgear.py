@@ -90,6 +90,13 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
             """<M1:GetAttachDevice xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",
         ),
         (
+            "GetAttachDevice2.xml",
+            "get_attached_devices_2",
+            "DeviceInfo",
+            "GetAttachDevice2",
+            """<M1:GetAttachDevice2 xmlns:M1="urn:NETGEAR-ROUTER:service:DeviceInfo:1" />""",
+        ),
+        (
             "DeviceInfo.xml",
             "get_device_info",
             "DeviceInfo",
@@ -169,6 +176,7 @@ async def test_login(responses: aioresponses, netgear_client: NetgearClient) -> 
     ],
     ids=[
         "get_attached_devices",
+        "get_attached_devices_2",
         "get_device_info",
         "get_traffic_meter_statistics",
         "get_traffic_meter_statistics_2",

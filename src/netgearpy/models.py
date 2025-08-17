@@ -157,19 +157,77 @@ class ConnectionType(StrEnum):
 
     WIRED = "wired"
     WIRELESS = "wireless"
+    TWO_GHZ = "2.4GHz"
+    FIVE_GHZ = "5GHz"
+
+    def is_wireless(self) -> bool:
+        """Check if the connection type is wireless."""
+        return self in (self.WIRELESS, self.TWO_GHZ, self.FIVE_GHZ)
+
+
+class DeviceType(StrEnum):
+    """Enum for device v2 types."""
+
+    GENERIC_COMPUTER = "1"
+    LAPTOP = "2"
+    DESKTOP = "3"
+    GENERIC_ENTERTAINMENT = "4"
+    TV = "5"
+    MEDIA_STREAMER = "6"
+    GAMING = "7"
+    SMART_SPEAKER = "8"
+    GENERIC_HOME_OFFICE = "9"
+    PRINTER = "10"
+    GENERIC_IOT = "11"
+    SMART_PLUG = "12"
+    FRIDGE = "13"
+    LIGHT = "14"
+    THERMOSTAT = "15"
+    FRAME = "16"
+    GENERIC_SMARTPHONE = "17"
+    TABLET = "18"
+    GENERIC_NETWORK = "19"
+    NAS = "20"
+    ROUTER = "21"
+    EXTENDER = "22"
+    IP_PHONE = "23"
+    GENERIC_SECURITY = "24"
+    CAMERA = "25"
+    DOORBELL = "26"
+    SMART_LOCK = "27"
+    GENERIC_WEARABLE = "28"
 
 
 @dataclass(kw_only=True)
-class AttachedDevice:
+class AttachedDevice(DataClassDictMixin):
     """Represents an attached device."""
 
-    ip_address: str
-    hostname: str | None
-    mac_address: str
-    connection_type: ConnectionType | None
-    link_speed: int | None
-    signal_strength: int | None
+    ip_address: str = field(metadata=field_options(alias="IP"))
+    hostname: str | None = field(metadata=field_options(alias="Name"))
+    name_set_by_user: bool | None = field(metadata=field_options(alias="NameUserSet"))
+    mac_address: str = field(metadata=field_options(alias="MAC"))
+    connection_type: ConnectionType | None = field(
+        metadata=field_options(alias="ConnectionType")
+    )
+    ssid: str | None = field(metadata=field_options(alias="SSID"))
+    link_speed: int | None = field(metadata=field_options(alias="Linkspeed"))
+    signal_strength: int | None = field(metadata=field_options(alias="SignalStrength"))
     blocked: bool | None
+    schedule: bool | None = field(metadata=field_options(alias="Schedule"))
+    device_type: DeviceType | None = field(metadata=field_options(alias="DeviceTypeV2"))
+    device_model: str | None = field(metadata=field_options(alias="DeviceModel"))
+    device_model_set_by_user: bool | None = field(
+        metadata=field_options(alias="DeviceModelUserSet")
+    )
+    qos_priority: int | None = field(metadata=field_options(alias="QosPriority"))
+
+    @classmethod
+    def __pre_deserialize__(cls, d: dict[str, Any]) -> dict[str, Any]:
+        """Pre deserialize hook."""
+        return {
+            **d,
+            "blocked": d["AllowOrBlock"] == "Block",
+        }
 
     @classmethod
     def from_string(cls, source_string: str) -> AttachedDevice:
@@ -194,11 +252,18 @@ class AttachedDevice:
         return AttachedDevice(
             ip_address=ip_address,
             hostname=hostname,
+            name_set_by_user=None,
             mac_address=mac_address,
             connection_type=connection_type,
+            ssid=None,
             link_speed=link_speed,
             signal_strength=signal_strength,
             blocked=blocked,
+            schedule=None,
+            device_type=None,
+            device_model=None,
+            device_model_set_by_user=None,
+            qos_priority=None,
         )
 
 

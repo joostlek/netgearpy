@@ -16,6 +16,7 @@ from yarl import URL
 from netgearpy.const import (
     ENVELOPE,
     FINISH_DEVICE_CONFIGURATION_BODY,
+    GET_ATTACHED_DEVICES_2_BODY,
     GET_ATTACHED_DEVICES_BODY,
     GET_BLOCK_DEVICE_ENABLE_BODY,
     GET_ETHERNET_LINK_STATUS_BODY,
@@ -132,9 +133,7 @@ class NetgearClient:
         self._login_method = result.login_method
         return result
 
-    async def _post_xml(
-        self, service: str, action: str, body: str
-    ) -> dict[str, str | None]:
+    async def _post_xml(self, service: str, action: str, body: str) -> str:
         """Post XML data to the Netgear router."""
         if self._soap_port is None or self._login_method is None:
             await self.get_current_setting()
@@ -162,6 +161,13 @@ class NetgearClient:
                 str(url), method=METH_POST, data=body_str, headers=headers
             )
         _LOGGER.debug("Response from %s: %s", url, response)
+        return response
+
+    async def _post_and_process_xml(
+        self, service: str, action: str, body: str
+    ) -> dict[str, str | None]:
+        """Post XML data to the Netgear router and process the response."""
+        response = await self._post_xml(service, action, body)
         response_dict = {}
         root = ET.fromstring(response)  # noqa: S314
         for item in root.iter():
@@ -182,7 +188,7 @@ class NetgearClient:
 
     async def get_attached_devices(self) -> list[AttachedDevice]:
         """Get the attached devices from the Netgear router."""
-        response = await self._post_xml(
+        response = await self._post_and_process_xml(
             Service.DEVICE_INFO,
             DeviceInfoAction.GET_ATTACHED_DEVICES,
             GET_ATTACHED_DEVICES_BODY,
@@ -194,9 +200,25 @@ class NetgearClient:
             AttachedDevice.from_string(entry) for entry in device_string.split("@")[1::]
         ]
 
+    async def get_attached_devices_2(self) -> list[AttachedDevice]:
+        """Get the attached devices from the Netgear router using V2 method."""
+        response = await self._post_xml(
+            Service.DEVICE_INFO,
+            DeviceInfoAction.GET_ATTACHED_DEVICES_2,
+            GET_ATTACHED_DEVICES_2_BODY,
+        )
+        result = []
+        root = ET.fromstring(response)  # noqa: S314
+        for item in root.iter("Device"):
+            di = {}
+            for field in item:
+                di[field.tag] = field.text
+            result.append(AttachedDevice.from_dict(di))
+        return result
+
     async def is_parental_control_enabled(self) -> bool:
         """Check if parental control is enabled."""
-        response = await self._post_xml(
+        response = await self._post_and_process_xml(
             Service.PARENTAL_CONTROL,
             ParentalControlAction.GET_ENABLE_STATUS,
             IS_PARENTAL_CONTROL_ENABLED_BODY,
@@ -205,7 +227,7 @@ class NetgearClient:
 
     async def is_block_device_enabled(self) -> bool:
         """Check if block device is enabled."""
-        response = await self._post_xml(
+        response = await self._post_and_process_xml(
             Service.DEVICE_CONFIG,
             DeviceConfigAction.GET_BLOCK_DEVICE_ENABLE_STATUS,
             GET_BLOCK_DEVICE_ENABLE_BODY,
@@ -214,14 +236,14 @@ class NetgearClient:
 
     async def get_device_info(self) -> DeviceInfo:
         """Get device information from the Netgear router."""
-        response = await self._post_xml(
+        response = await self._post_and_process_xml(
             Service.DEVICE_INFO, DeviceInfoAction.GET_INFO, GET_INFO_BODY
         )
         return DeviceInfo.from_dict(response)
 
     async def get_traffic_meter_statistics(self) -> TrafficMeterStatistics:
         """Get traffic meter statistics from the Netgear router."""
-        response = await self._post_xml(
+        response = await self._post_and_process_xml(
             Service.DEVICE_CONFIG,
             DeviceConfigAction.GET_TRAFFIC_METER_STATISTICS,
             GET_TRAFFIC_METER_STATISTICS_BODY,
@@ -230,14 +252,14 @@ class NetgearClient:
 
     async def get_system_info(self) -> SystemInfo:
         """Get system information from the Netgear router."""
-        response = await self._post_xml(
+        response = await self._post_and_process_xml(
             Service.DEVICE_INFO, DeviceInfoAction.GET_SYSTEM_INFO, GET_SYSTEM_INFO_BODY
         )
         return SystemInfo.from_dict(response)
 
     async def is_traffic_meter_enabled(self) -> bool:
         """Check if the traffic meter is enabled."""
-        response = await self._post_xml(
+        response = await self._post_and_process_xml(
             Service.DEVICE_CONFIG,
             DeviceConfigAction.GET_TRAFFIC_METER_ENABLED,
             IS_TRAFFIC_METER_ENABLED_BODY,
@@ -246,7 +268,7 @@ class NetgearClient:
 
     async def is_guest_access_enabled(self) -> bool:
         """Check if guest access is enabled."""
-        response = await self._post_xml(
+        response = await self._post_and_process_xml(
             Service.WLAN_CONFIGURATION,
             WlanConfigurationAction.GET_GUEST_ACCESS_ENABLED,
             IS_GUEST_ACCESS_ENABLED_BODY,
@@ -255,7 +277,7 @@ class NetgearClient:
 
     async def is_5g_guest_access_enabled(self) -> bool:
         """Check if 5G guest access is enabled."""
-        response = await self._post_xml(
+        response = await self._post_and_process_xml(
             Service.WLAN_CONFIGURATION,
             WlanConfigurationAction.GET_5G1_GUEST_ACCESS_ENABLED_2,
             IS_5G_GUEST_ACCESS_ENABLED_BODY,
@@ -264,7 +286,7 @@ class NetgearClient:
 
     async def is_qos_enabled(self) -> bool:
         """Check if QoS is enabled."""
-        response = await self._post_xml(
+        response = await self._post_and_process_xml(
             Service.ADVANCED_QOS,
             AdvancedQoSAction.GET_QOS_ENABLE_STATUS,
             IS_QOS_ENABLED_BODY,
@@ -273,7 +295,7 @@ class NetgearClient:
 
     async def is_smart_connect_enabled(self) -> bool:
         """Check if Smart Connect is enabled."""
-        response = await self._post_xml(
+        response = await self._post_and_process_xml(
             Service.WLAN_CONFIGURATION,
             WlanConfigurationAction.IS_SMART_CONNECT_ENABLED,
             IS_SMART_CONNECT_ENABLED,
@@ -282,7 +304,7 @@ class NetgearClient:
 
     async def get_ethernet_link_status(self) -> str:
         """Get the ethernet link status from the Netgear router."""
-        response = await self._post_xml(
+        response = await self._post_and_process_xml(
             Service.WAN_ETHERNET_LINK_CONFIG,
             WanEthernetLinkConfigAction.GET_ETHERNET_LINK_STATUS,
             GET_ETHERNET_LINK_STATUS_BODY,
@@ -291,14 +313,14 @@ class NetgearClient:
         return response["NewEthernetLinkStatus"]
 
     async def _start_configuration(self) -> None:
-        await self._post_xml(
+        await self._post_and_process_xml(
             Service.DEVICE_CONFIG,
             DeviceConfigAction.CONFIGURATION_STARTED,
             START_DEVICE_CONFIGURATION_BODY,
         )
 
     async def _finish_configuration(self) -> None:
-        await self._post_xml(
+        await self._post_and_process_xml(
             Service.DEVICE_CONFIG,
             DeviceConfigAction.CONFIGURATION_FINISHED,
             FINISH_DEVICE_CONFIGURATION_BODY,
@@ -307,7 +329,7 @@ class NetgearClient:
     @device_configuration_mode
     async def reboot(self) -> None:
         """Reboot the Netgear router."""
-        await self._post_xml(
+        await self._post_and_process_xml(
             Service.DEVICE_CONFIG,
             DeviceConfigAction.REBOOT,
             REBOOT_BODY,
